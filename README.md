@@ -21,7 +21,7 @@ Segue uma breve descrição dos passos dados na construção do chatbot realizad
 
 <img width="523" alt="Intents_result" src="https://user-images.githubusercontent.com/76813386/156903609-ae23e7f7-7c96-4c12-bfec-d93f2c5762ba.PNG">
 
-3. Terminado a primeira fase de **Behavior/Interaction** partimos para a fase de **Architect/Build**, utilizado o Dialogflow como ferramenta, adicionando todas as intents, com as potenciais questões dos clientes e respectivas respostas. Nesta fase o nosso conjunto de dados foi treinado com Inteligencia Artificial para que fosse possível identificar a intenção da questão do cliente, mesmo com outras construções de sintaxe.
+3. Terminado a primeira fase de **Behavior/Interaction** partimos para a fase de **Architect/Build**, utilizando o Dialogflow como ferramenta, adicionando todas as intents, com as potenciais questões dos clientes e respectivas respostas. Nesta fase o nosso conjunto de dados foi treinado com Inteligencia Artificial para que fosse possível identificar a intenção da questão do cliente, mesmo com outras construções de sintaxe.
 
 <img width="431" alt="Dialogflow" src="https://user-images.githubusercontent.com/76813386/156903831-deff43b7-203a-430f-91ab-d05970280a51.PNG">
 
