@@ -8,7 +8,7 @@ O desafio lançado no curso ***HelloBot*** (curso inicial de uma semana) era o d
 
 A ferramenta pertence à [School Guardian](https://www.schoolguardian.app/) e esta empresa em parceria com a LetsBot entregou um caso real para ser resolvido no ambito do curso. Desta forma, todos os matriculados vão ter a possibilidade de resolver um caso real utilizando todas as técnicas aprendidas ao longo de várias semanas.
 
-## Objetico
+## Objetivo
 
 O desafio a que me propus não era trazer para aqui o resultado do bot criado em Dialogflow, mas replicar os conhecimentos utilizando programação em Python.
 
