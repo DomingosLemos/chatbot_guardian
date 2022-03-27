@@ -72,8 +72,20 @@ Dentro do environment, no meu caso chamei de chatbot, temos que instalar as segu
 > pip install keras<br>
 > pip install tensorflow<br>
 > pip install flask<br>
+> pip install spacy<br>
+
+Download do modelo para interpretar a lingua portuguesa:
+> python -m spacy download pt_core_news_md<br>
+
 
 Neste momento temos o ambiente pronto. Apenas uma nota, a versão que eu usei de python é 3.7.9. Também deverá funcionar com versões mais recentes.
+
+### API do webhook
+
+Para criar um webhook para usar no chatbot, recorri ao Heroku (https://www.heroku.com/). Se não conhece, este site permite fazer deploy de web ou a exposição de API de forma gratuita (com limitação até 5 projetos).
+
+Não é o meu propósito explicar os passos necessários para a criação das APIs, uma vez que há muitos videos na web a ensinar. Caso pretenda experimentar, pode usar a minha API criada para este projeto e que se encontra no código fonte.
+Se tiver curiosidade pode também ver o código compactado no ficheiro api-py.zip e usar como bem entender. 
 
 ### Estrutura do projeto
 
@@ -171,3 +183,8 @@ https://docs.microsoft.com/en-us/azure/bot-service/bot-service-quickstart-create
 
 Criação de environment: <br>
 https://docs.python.org/3/tutorial/venv.html
+
+Bibliotecas usadas:
+https://www.nltk.org/
+https://realpython.com/natural-language-processing-spacy-python/
+

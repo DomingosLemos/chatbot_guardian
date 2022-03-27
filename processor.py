@@ -8,10 +8,15 @@ from keras.models import load_model
 model = load_model('chatbot_model.h5')
 import json
 import random
+import requests
+import spacy
+
 intents = json.loads(open('job_intents.json', encoding='utf-8').read())
 words = pickle.load(open('words.pkl','rb'))
 classes = pickle.load(open('classes.pkl','rb'))
-
+nlp = spacy.load('pt_core_news_md') #modelo da lingua portuguêsa
+statusBot = {"status":"", "url":"", "param_name":"", "param_value":""} # "" = normal; "way_param" = aguarga input para API
+debug = True
 
 def clean_up_sentence(sentence):
     sentence_words = nltk.word_tokenize(sentence)
@@ -52,16 +57,85 @@ def predict_class(sentence, model):
         return_list.append({"intent": classes[r[0]], "probability": str(r[1]), "threshould": str(ERROR_THRESHOLD)})
     return return_list
 
+def getEntity(api_param_type, msg):
+    #api_param_type: 
+    #   proper noun (nome próprio: João, Lisboa, CCB)
+    #   verb (verbo: estar, ficar)
+    #   pronoun (pronome: eu, eles, aqueles, minha, meu, sua)
+    #   adverb (advérbios: amanhã, agora, sempre, ali, assim)
+    #   adjective (adjetivo: bonito, agradável )
+    #   pontuation (pontuação: ?, !)
+
+    doc = nlp(msg)
+    print("doc: ", doc)
+    for token in doc:
+        if debug:
+            print('function: getEntity | type: ', api_param_type, ' | tag: ', token.tag_, ' | explain: ', spacy.explain(token.tag_), ' | entidade: ', token.text) 
+
+        if (spacy.explain(token.tag_) == api_param_type):
+            return token.text
+    
+    if debug:
+        print('function: getEntity | type: ', api_param_type, ' | texto: ', msg, ' | resultado: entidade não encontrada') 
+    return ""
+
+def callAPI(url, param_name="", param_value=""):
+    if param_name != "":
+        param = {param_name:param_value}
+        response = requests.get(url, params=param)
+    else:
+        response = requests.get(url)
+
+    return response.text
+
 def getResponse(ints, intents_json, msg):
-    if (len(ints)==0):
+    global statusBot
+
+    if debug:
+        print ("statusBot: ", statusBot)
+        print ("ints: ", ints)
+    if (len(ints)==0 and statusBot['status'] == ""):
         result = "Não  entendi. Pode reformular a pergunta?"
+    elif (statusBot['status'] == "way_param"):
+        #recebi resposta para a minha API (falta de entidade)
+        if (statusBot['param_name'] != ""):
+            response = callAPI(statusBot['url'], statusBot['param_name'], msg)
+        else:
+            response = callAPI(statusBot['url'])
+        result =  response 
+        if debug:
+            print ('function: getResponse(0) | Recolha da entidade em falta | resposta: ', response )
+
+        statusBot = {"status":"", "url":"", "param_name":"", "param_value":""} # limpa tudo
     else:
         tag = ints[0]['intent']
         list_of_intents = intents_json['intents']
         for i in list_of_intents:
+            # encontrou a intent desejada
             if(i['tag']== tag):
-                result = random.choice(i['responses']) + '  --  ' + ints[0]['intent'] + '   --   ' + ints[0]['probability'] + '  --  ' + msg + '  ---  ' + ints[0]['threshould']
-                break
+                # verifica se existe uma API que trata da intent             
+                if(i['api_action'] != ""):
+                    response=""
+                    if (i['api_param_type'] != ""):
+                        element = str(getEntity(i['api_param_type'], msg))
+
+                        #verifica se existe o elemento procurado
+                        if (element == ""):
+                            response = random.choice(i['api_responses_missing_param'])
+                            statusBot = {"status": "way_param", "url": i['api_action'], "param_name": i['api_param_name'], "param_value": element}
+                        else:
+                            response = callAPI(i['api_action'], i['api_param_name'], element)
+                    else:
+                        response = callAPI(i['api_action'])
+
+                    result = response
+                    if debug:
+                        print ('function: getResponse(1) | resposta API: ', response + ' | intent: ' + ints[0]['intent'] + ' | probability: ' + ints[0]['probability'] + ' | call API | threshould: ' + ints[0]['threshould'])
+                else:
+                    result = random.choice(i['responses'])
+                    if debug:
+                        print ('function: getResponse(2) | resposta: ', random.choice(i['responses']) + ' | intent: ' + ints[0]['intent'] + ' | probability: ' + ints[0]['probability'] + ' | threshould: ' + ints[0]['threshould'])
+                break 
             else:
                 result = "Não entendi. Pode reformular a pergunta?"
     return result

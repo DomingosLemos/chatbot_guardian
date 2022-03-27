@@ -61,7 +61,7 @@
                   question: $("#question").val()
               },
               success: function(result) {
-                $("#response").append("<br>Me: "+$("#question").val()+ "<br> Guardian Bot: "+result.response);
+                $("#response").append("<br><b>Me:</b> "+$("#question").val()+ "<br><b>Guardian Bot:</b> "+result.response);
                 $("#question").val("")
               },
               error: function(result) {

@@ -2,31 +2,48 @@
   "intents": [
     {"tag": "saudação",
      "patterns": ["Olá", "Viva", "Oi", "Hola", "bom dia", "boa tarde", "boa noite", "Hi", "tudo bom?", "Tudo bem?"],
-     "responses": ["Olá", "Viva, Como posso ajudar?", "Boas, necessita de alguma ajuda?"]
-    },
+     "responses": ["Olá", "Viva, Como posso ajudar?", "Boas, necessita de alguma ajuda?"],
+     "api_action": ""
+   },
     {"tag": "despedida",
      "patterns": ["Bye", "Até logo", "Goodbye", "Ok bye", "adeus", "txau", "até à vista"],
-     "responses": ["Adeus", "Tenha um bom dia", "Até à vista"]
-    },
+     "responses": ["Adeus", "Tenha um bom dia", "Até à vista"],
+     "api_action": ""
+   },
     {"tag": "agradecimento",
      "patterns": ["Thanks", "Thank you", "Obrigado", "Muito obrigado", "Era mesmo isso, obrigado", "obrigado pela ajuda", "grande ajuda"],
-     "responses": ["Fico feliz por poder ajudar", "Sempre disponível", "Sempre às ordens", "Eu é que agradeço usar este canal"]
-    },
+     "responses": ["Fico feliz por poder ajudar", "Sempre disponível", "Sempre às ordens", "Eu é que agradeço usar este canal"],
+     "api_action": ""
+   },
     {"tag": "noanswer",
      "patterns": [""],
-     "responses": ["Desculpe não percebi", "Pode dar mais detalhes", "Creio que não entendi"]
-     },
+     "responses": ["Desculpe não percebi", "Pode dar mais detalhes", "Creio que não entendi"],
+     "api_action": ""
+   },
      {"tag": "nome",
       "patterns": ["Qual o teu nome", "Como te chamas", "Diz-me o teu nome", "Quem és tu", "Tu és", "conta-me mais de ti"],
-      "responses": ["Eu sou o Guadian Bot", "Chamo-me Guadian Bot", "Guadian Bot é o meu nome"]
+      "responses": ["Eu sou o Guadian Bot", "Chamo-me Guadian Bot", "Guadian Bot é o meu nome"],
+      "api_action": ""
       },
       {"tag": "help",
        "patterns": ["Necessito de uma ajuda", "Pedido de ajuda", "Help", "O que fazes", "Como podes ajudar", "O que sabes", "Sabes fazer o quê", "ajudas", "podes ajudar"],
-       "responses": ["A app da School Guardian funciona de maneira muito simples e intuitiva, a pensar nos pais e colégio.<br><br>A nossa principal preocupação é agilizar a saída em segurança dos alunos.<br><br>Para que tudo funcione temos 4 passos que deve seguir (digite de 1 a 4 para ficar a saber quais são)<br><br>Nota importante: para que tudo funcione bem tem que ter conexão com a internet e localização ativada."]
-      },
-     {"tag": "Intrumentar_passe_1",
-      "patterns": ["Qual o passo 1?", "Qual é o primeiro passo a dar?", "1"],
-      "responses": ["Passo 1: O responsável aciona o botão de chamado. (Esse acionamento pode ocorrer antes mesmo do usuário sair de sua atual localização)"]
-      }
-  ]
+       "responses": ["A app da School Guardian funciona de maneira muito simples e intuitiva, a pensar nos pais e colégio.<br><br>A nossa principal preocupação é agilizar a saída em segurança dos alunos.<br><br>Para que tudo funcione temos 4 passos que deve seguir (digite de 1 a 4 para ficar a saber quais são)<br><br>Nota importante: para que tudo funcione bem tem que ter conexão com a internet e localização ativada."],
+       "api_action": ""
+       },
+     {"tag": "Obter_nome_melhor_aluno",
+      "patterns": ["Quem é o melhor aluno?", "Qual o nome do melhor aluno?", "Como se chama o melhor aluno?"],
+      "responses": [""],
+      "api_action": "https://dalemos-api-py.herokuapp.com/demo?action=obter_nome_aluno",
+      "api_param_type": "",
+      "api_param_name": ""
+    },
+      {"tag": "Obter_nome_responsavel",
+        "patterns": ["Quem é o responsável do João?", "Qual o nome do responsável da Luísa?", "Como se chama o responsável do Luís?"],
+        "responses": [""],
+        "api_action": "https://dalemos-api-py.herokuapp.com/demo?action=obter_responsavel",
+        "api_param_type":"proper noun",
+        "api_param_name": "aluno",
+        "api_responses_missing_param": ["Qual o nome da criança?", "Como se chama a criança?"]
+        }
+    ]
 }
