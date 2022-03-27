@@ -17,6 +17,7 @@ O desafio a que me propus não era trazer para aqui o resultado do bot criado em
 Segue uma breve descrição dos passos dados na construção do chatbot realizado no curso inicial ***HelloBot***
 
 1. A ***School Guadian*** entregou um conjunto de top questões recebidas pelos encarregados de educação onde tivemos numa primeira fase encaixar em intenções (intents). 
+
 2. Depois tivemos que enriquecer cada intenção com perguntas similares e respostas alternativas, para que tivessemos uma fonte de dados para treinar um modelo de Processamento de Linguagem Natural (NLP). Como resultado, tivemos um ficheiro de excel com a seguinte estrutura: 
 
 <img width="523" alt="Intents_result" src="https://user-images.githubusercontent.com/76813386/156903609-ae23e7f7-7c96-4c12-bfec-d93f2c5762ba.PNG">
@@ -31,11 +32,23 @@ O resultado foi este: [School Guardian Bot](https://sites.google.com/view/school
 
 5. A última fase do ***HelloBot*** foi de **Training**, onde todos fomos convidados a quebrar o bot dos colegas e assim poder fazer o **Curate** dos nossos bots. Confesso que esta foi uma das partes bem divertidas do curso.
 
+6. Dando continuidade aos conteúdos do BotCamp, foi introduzido um novo mecanismo, chamado de webhook, onde é permitido uma interação mais dinâmica, que não limita às resposta previamente programadas. Isto é feito recorrendo a chamadas de APIs externas ao bot. Até aqui tudo pacífico, não fosse a necessidade de poder haver chamadas que necessitam de parâmetros que têm que ser recolhidos das frases dos utilizadores. Segue um pequeno exemplo que ajuda a perceber melhor:
+
+<img width="261" alt="webhook_bot" src="https://user-images.githubusercontent.com/76813386/160299321-446e8b44-63e8-4ab2-9c71-43f55453df7b.png">
+
+  No exemplo anterior, podem ver 3 conversas (a seta indica a ordem das entradas). Em todas as conversas a chamada cai na intent "Obter_nome_responsavel" que necessita de identificar o nome do responsável da criança. Neste caso, não podemos prever uma resposta certa, uma vez que depende do nome da criança. Aqui entra a utilização do webhook, ou seja, uma chamada de uma API exterior que irá validar dentro de alguma base de dados da escola a resposta à questão. Para o bot é indiferente ao que é feito dentro da API, apenas lhe interessa o resultado. 
+Este webhook está preparado para responder apenas a dois nomes de crianças "João" e "Júlia", a título de demonstração.
+Na 1ª conversa, o bot identificou o nome do aluno e a api respondeu qual o responsável correspondente. 
+Na 2ª conversa não foi colocado o nome da criança e o bot como identificou a falta desta informação perguntou "Qual o nome da criança?".
+Na 3ª conversa, apesar do bot ter identificado o nome da criança, quando fez a chamada, a api não devolveu nada o que originou a resposta de não existir aquela criança. 
+A grande diferença desta solução, comparativamente ao Dialogflow é que o processo está preparado para usar diferentes webhook para diferentes Intents e quando pede o nome da criança, o que for respondido é tratado como se do nome se tratasse, terminando essa iteração. 
+Mas nem tudo são rosa, pois o bot apenas foi preparado para ir até máximo de um parâmetro. Esta configuração encontra-se no ficheiro "job_intents.json" explicado mais abaixo.
+
 ## Estrutura/setup do projecto Python
 
 A aprendizagem anterior foi essencial para o desenho e construção do chatbot. A ideia não foi replicar o conjunto completo de todas as intents identificadas, mas montar uma estrutura que permita fazer algo semelhante.
 
-Quero deixar bem claro que boa parte do código foi extraido da net e não é de minha autoria. Deixo mais abaixo as referencias. 
+Quero deixar bem claro que uma parte do código foi extraido da net e não é de minha autoria. Deixo mais abaixo as referencias. 
 O verdadeiro desafio foi colar as várias peças encontradas na net e montar uma solução identica à da formação. 
 
 ### Setup 
@@ -116,6 +129,26 @@ Caso pretenda remover, basta alterar no file "processor.py".
 <img width="206" alt="chatbot_gui" src="https://user-images.githubusercontent.com/76813386/156906136-ff156fcf-74e8-4ef9-974c-63c98a625d15.PNG">
 
 Neste caso, é aberto uma janela de chat e o resultado mostrado é semelhante ao exemplo anterior, até porque ambos partilham das mesmas funções do file "processor.py".
+
+## Estrutura do JSON
+
+O JSON com a informação das intents tem toda a informação necessária para definir a forma como o bot deve agir. Desta forma, é muito importante ficar explicado como está estruturado e o significado de cada parte.
+
+<img width="544" alt="json" src="https://user-images.githubusercontent.com/76813386/160299716-37d5a70b-20a8-4b22-9736-77b170200e6a.PNG">
+
+O ficheiro é um array de Intents, onde cada intent pode ter:
+| Nome | significado | Mandatório | Exemplos |
+| ---- | ----------- | ---------- | -------- |
+| tag  | Nome da intent | sim | 'Obter_nome_melhor_aluno' |
+| patterns | Formas diferentes de dizer o mesmo e que têm o mesmo sentido da Intent. Vão servir para a criação do modelo de IA | sim | ['Olá', 'Bom dia', ...] |
+| responses | Respostas possíveis a dar no caso da Intent ser escolhida como provável. É um array de respostas para permitir escolher uma de forma aleatória e assim parecer mais uma conversa humana | sim | ['olá', 'Viva, como posso ajudar?'] |
+| api_action | Corresponde ao url do webhook para fazer uma chamada ao exterior. Caso a resposta não necessite de fazer nenhuma chamada, deverá deixar com string vazia | sim | "https://xpto.com/demo?action=obter_nome_aluno" |
+| api_param_type | informa, quando diferente de string vazia, o tipo de informação a extrair da frase para entregar na chamada da API. Este pode ser nome próprio (proper noun), verbo (verb), pronome (pronoun), advérbios (adverb), adjetivo (adjective), entre outros permitidos pela biblioteca spacy do python. | Apenas obrigatório quando tem api_action <> "" | 'proper noun' |  
+| api_param_name | Representa o nome do parâmetro que a api está desenhada para receber | Apenas obrigatório quando tem api_action <> "" | 'aluno' |
+| api_responses_missing_param | Sempre que não for encontrado a informação que mapea com o parâmetro de entrada para a API, pode colocar aqui a questão para obter a informação em falta. Este campo é um array de questões para que seja escolhida uma aleatoriamente e assim parecer uma conversa mais naturar com o cliente | Apenas se api_action <> "" e tiver parâmetro de entrada (api_param_type <> "") | ['Qual o nome da criança?', 'Como se chama a criança'] |
+
+O motor do bot vai ler esta informação e vai conter toda a lógica necessária para responder de acordo com o esperado.
+
 
 ## Modelo de NLP
 
