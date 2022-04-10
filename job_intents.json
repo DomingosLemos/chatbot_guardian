@@ -44,6 +44,22 @@
         "api_param_type":"proper noun",
         "api_param_name": "aluno",
         "api_responses_missing_param": ["Qual o nome da criança?", "Como se chama a criança?"]
-        }
-    ]
+        },
+        {"tag": "Responder_horario_saida",
+          "patterns": ["Qual horário de saida do meu filho", "Qual horário de retirada parcial?", "Qual horário de saída do integral?", "Quando termina o horário a tempo inteiro"],
+          "responses": [""],
+          "api_action": "https://dalemos-api-py.herokuapp.com/demo?action=consultar_horario_retirada",
+          "api_param_type":"entity",
+          "api_param_name": "periodo",
+          "api_responses_missing_param": ["Qual o tipo de periodo?", "Para o periodo integral ou parcial?"]
+          }
+    ],
+  "entities": [
+    {"name": "periodo",
+      "values": {
+        "parcial" : ["parcial", "meio periodo", "meio-periodo", "meio", "metade do tempo"],
+        "integral" : ["integral", "dia completo", "tempo inteiro", "dia todo"]
+      }
+    }
+  ]
 }
