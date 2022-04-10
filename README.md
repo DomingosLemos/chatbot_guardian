@@ -51,20 +51,19 @@ A aprendizagem anterior foi essencial para o desenho e construção do chatbot. 
 Quero deixar bem claro que uma parte do código foi extraido da net e não é de minha autoria. Deixo mais abaixo as referências. 
 O verdadeiro desafio foi colar as várias peças encontradas na net e montar uma solução identica à da formação, com desenvolvimentos para várias features. 
 
-### Funcionalidades desenvolvidas
-
-O bot está construido numa base de Inteligência Artificial, recorrendo a NLP e Deep Learning.
-Segue a lista das features já desenvolvidas:
-* Identificação das intents com base nos diálogos conversacionais desenhados
-* Chamada a webhook para interações externas. Cada intent pode recorrer a um webhook diferente
-* Desambiguação recorrendo a entidades
-
 ### Roadmap
 
-Funcionalidades ainda por desenvolver ou melhorar:
-* Fluxos conversacionais com IA
-* Aceitar lista de parâmetros para as APIs
-* Melhorar o design do frontend de ambas as versões
+Fase do projeto e funcionalidades ainda por desenvolver ou melhorar:
+| Quando | Descrição |
+| ------ | --------- |
+| 06.mar.2022 | Criado o primeiro protótipo apenas com identificação das intents com base nos diálogos conversacionais desenhados |
+| 27.mar.2022 | Chamada a webhook para interações externas. ao contrário do Dialogflow, cada intent pode recorrer a um webhook diferente |
+| 10.abr.2022 | Acrescentado o mecanismo de desambiguação recorrendo a um novo elemento das entidades. Também foi desenvolvido um mecanismo de debug mais detalhado |
+| | Passar alguns parâmetros para o ficheiro json (graus de confiança, flag debug, etc) |
+| | Fluxos conversacionais com IA |
+| | Passar a aceitar lista de parâmetros de entrada para as APIs |
+| | Criar módulo de registo de logs para curadoria |
+| | Melhorar o design do frontend de ambas as versões |
 
 ### Setup 
 
@@ -150,6 +149,55 @@ Em formato popup:
 <img width="199" alt="FE2" src="https://user-images.githubusercontent.com/76813386/162629606-544505bd-dd8c-455b-9106-371b00743ac1.PNG">
 
 Neste caso, é aberto uma janela de chat e o resultado mostrado é semelhante ao exemplo anterior, até porque ambos partilham das mesmas funções do file "processor.py".
+
+### Como fazer debug 
+
+Toda a estrutura do código do motor do chatbot está preparada para registar informação que permitem fazer um debug de baixo nível.
+No ficheiro processor.py existe uma variável global com o nome debug e que está por default a true. Caso não seja pretendido fazer debug basta colocar a false.
+O debug não é mais que um conjunto de prints com informação da função executada, os valores de algumas variáveis que fazem sentido e alguns comentários para melhor situar o significado do mesmo.
+
+Exemplo simples:
+
+<img width="667" alt="debug" src="https://user-images.githubusercontent.com/76813386/162630127-343629ac-3f13-45fe-bc2d-9ac8c9c9a620.PNG">
+
+Neste exemplo, quando o user submete uma frase é escrito "------" a delimitar o inicio e o fim do tratamento dessa frase.
+Na imagem prévia podemos ver:
+* __*function: chatbot_response | msg*__: informa a mensagem inserida pelo user
+* __*function: getResponse(0) | StatusBot*__: contém o estado do bot entre interações de frases. Importante para chamadas externas de api ou envolvimento de entidades
+* __*function: getResponse(0) | ints*__: diz qual a intenção identificada, assim como a probabilidade [0..1] e o threshould (grau de confiança mínimo) para aceitar a intenção como válida.
+* __*function: chatbot_response | resposta*__: mostra a resposta resultante que vai devolver e ainda tem mais à frente o resultado que indica que é uma resposta aliatória de várias.
+
+Nota que o nome da função e o valor entre () serve para localizar melhor a chamada no código.
+
+Exemplo utilizando uma entidade:
+
+<img width="183" alt="exemplo1" src="https://user-images.githubusercontent.com/76813386/162630881-dd3027b5-d997-4920-8b9b-1b549ca33f10.PNG">
+
+O resultado do debug:
+
+<img width="949" alt="debug2" src="https://user-images.githubusercontent.com/76813386/162630889-11a07899-80a4-4df5-86b0-c0f095c37c40.PNG">
+
+O resultado do debug é um pouco mais complexo, mas simples de se ler.
+
+1ª interação:
+* __*function: chatbot_response | msg*__: o user pergunta o horário de saída, mas não informa o tipo de periodo do filho
+* __*function: getResponse(0) | statusBot*__: está limpo
+* __*function: getResponse(0) | ints*__: informa que a intenção votada com quase 100% de certeza é "Responder_horario_saida" o que está correcto
+* __*function: getEntity(5) | api_param_type*__: informa o tipo de entidade, nome da entidade, a frase do user e o resultado de que a entidade está em falta
+* __*function: getResponse(3) | resposta API*__: mostra a resposta (prompt) obtida para o user identificar o valor da entidade em falta
+* __*function: chatbot_response | resposta*__: com o prompt escolhido de forma aliatória da lista de prompts
+
+2ª interação:
+* __*function: chatbot_response | msg*: o user responde com "tempo inteiro"
+* __*function: getResponse(0) | statusBot*__: tem informação que trata-se de uma resposta a uma questão do bot. podemos ver o url do webhook, e o param_type diz-nos que é uma resposta para identificar uma entidade, o que é verdade
+* __*function: getResponse(0) | ints*__: neste caso, a informação apresentada não tem interesse
+* __*function: getEntity(1) | api_param_type*__: mostra que a entidade é "periodo" e o valor identificado pelos sinónimos é "integral" para passar à api.
+* __*function: getResponse(1) | element*__: informa que vai chamar a api com o valor da entidade correctamente identificado
+* __*function: getResponse(2) | Recolha*__: mostra a resposta da chamada ao webhook
+* __*function: chatbot_response | resposta*__: mostra a resposta dada ao user
+
+Como se pode ver, os resultados imprimidos na linha de comando são bastante intuitivos. Os dois exemplos apresentados foram para ilustrar possíveis mensagens, mas não cobrem todas as mensagens programadas no código. Quando for desenvolvido o módulo de registo em ficheiro das mensagens, para curadoria, as mensagens serão ainda mais simples e intuitivas de serem lidas. 
+
 
 ## Estrutura do JSON
 
