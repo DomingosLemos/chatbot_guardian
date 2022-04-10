@@ -176,7 +176,7 @@ A estrutura da **Intent** pode ter:
 | api_param_name | Representa o nome do parâmetro que a api está desenhada para receber. Quando o campo api_param_type for igual a "entity", este campo deve também corresponder ao name da entidade correspondente | Apenas obrigatório quando tem api_action <> "" | 'aluno' |
 | api_responses_missing_param | Sempre que não for encontrado a informação que mapea com o parâmetro de entrada para a API, pode colocar aqui a questão para obter a informação em falta. Este campo é um array de questões para que seja escolhida uma aleatoriamente e assim parecer uma conversa mais naturar com o cliente | Apenas se api_action <> "" e tiver parâmetro de entrada (api_param_type <> "") | ['Qual o nome da criança?', 'Como se chama a criança'] |
 
-### Entity
+### Entity 
 
 <img width="637" alt="Entidade_config" src="https://user-images.githubusercontent.com/76813386/162626303-64f4d804-6865-4a7e-9724-ea60baf4fa57.PNG">
 
