@@ -48,8 +48,23 @@ Mas nem tudo são rosa, pois o bot apenas foi preparado para ir até máximo de 
 
 A aprendizagem anterior foi essencial para o desenho e construção do chatbot. A ideia não foi replicar o conjunto completo de todas as intents identificadas, mas montar uma estrutura que permita fazer algo semelhante.
 
-Quero deixar bem claro que uma parte do código foi extraido da net e não é de minha autoria. Deixo mais abaixo as referencias. 
-O verdadeiro desafio foi colar as várias peças encontradas na net e montar uma solução identica à da formação. 
+Quero deixar bem claro que uma parte do código foi extraido da net e não é de minha autoria. Deixo mais abaixo as referências. 
+O verdadeiro desafio foi colar as várias peças encontradas na net e montar uma solução identica à da formação, com desenvolvimentos para várias features. 
+
+### Funcionalidades desenvolvidas
+
+O bot está construido numa base de Inteligência Artificial, recorrendo a NLP e Deep Learning.
+Segue a lista das features já desenvolvidas:
+* Identificação das intents com base nos diálogos conversacionais desenhados
+* Chamada a webhook para interações externas. Cada intent pode recorrer a um webhook diferente
+* Desambiguação recorrendo a entidades
+
+### Roadmap
+
+Funcionalidades ainda por desenvolver ou melhorar:
+* Fluxos conversacionais com IA
+* Aceitar lista de parâmetros para as APIs
+* Melhorar o design do frontend de ambas as versões
 
 ### Setup 
 
@@ -144,22 +159,35 @@ Neste caso, é aberto uma janela de chat e o resultado mostrado é semelhante ao
 
 ## Estrutura do JSON
 
-O JSON com a informação das intents tem toda a informação necessária para definir a forma como o bot deve agir. Desta forma, é muito importante ficar explicado como está estruturado e o significado de cada parte.
+O JSON tem informação das intents e das entidades, em forma de array. Essa informação é necessária para definir a lógica do de atuação do bot. Desta forma, é muito importante ficar explicado como está estruturado e o significado de cada parte.
+
+### Intents
 
 <img width="544" alt="json" src="https://user-images.githubusercontent.com/76813386/160299716-37d5a70b-20a8-4b22-9736-77b170200e6a.PNG">
 
-O ficheiro é um array de Intents, onde cada intent pode ter:
+A estrutura da **Intent** pode ter:
 | Nome | significado | Mandatório | Exemplos |
 | ---- | ----------- | ---------- | -------- |
 | tag  | Nome da intent | sim | 'Obter_nome_melhor_aluno' |
 | patterns | Formas diferentes de dizer o mesmo e que têm o mesmo sentido da Intent. Vão servir para a criação do modelo de IA | sim | ['Olá', 'Bom dia', ...] |
 | responses | Respostas possíveis a dar no caso da Intent ser escolhida como provável. É um array de respostas para permitir escolher uma de forma aleatória e assim parecer mais uma conversa humana | sim | ['olá', 'Viva, como posso ajudar?'] |
 | api_action | Corresponde ao url do webhook para fazer uma chamada ao exterior. Caso a resposta não necessite de fazer nenhuma chamada, deverá deixar com string vazia | sim | "https://xpto.com/demo?action=obter_nome_aluno" |
-| api_param_type | informa, quando diferente de string vazia, o tipo de informação a extrair da frase para entregar na chamada da API. Este pode ser nome próprio (proper noun), verbo (verb), pronome (pronoun), advérbios (adverb), adjetivo (adjective), entre outros permitidos pela biblioteca spacy do python. | Apenas obrigatório quando tem api_action <> "" | 'proper noun' |  
-| api_param_name | Representa o nome do parâmetro que a api está desenhada para receber | Apenas obrigatório quando tem api_action <> "" | 'aluno' |
+| api_param_type | informa, quando diferente de string vazia, o tipo de informação a extrair da frase para entregar na chamada da API. Este pode ser nome próprio (proper noun), verbo (verb), pronome (pronoun), advérbios (adverb), adjetivo (adjective), entre outros permitidos pela biblioteca spacy do python. Também pode ter o valor "entity" quando se trata de uma entidade. | Apenas obrigatório quando tem api_action <> "" | 'proper noun' |  
+| api_param_name | Representa o nome do parâmetro que a api está desenhada para receber. Quando o campo api_param_type for igual a "entity", este campo deve também corresponder ao name da entidade correspondente | Apenas obrigatório quando tem api_action <> "" | 'aluno' |
 | api_responses_missing_param | Sempre que não for encontrado a informação que mapea com o parâmetro de entrada para a API, pode colocar aqui a questão para obter a informação em falta. Este campo é um array de questões para que seja escolhida uma aleatoriamente e assim parecer uma conversa mais naturar com o cliente | Apenas se api_action <> "" e tiver parâmetro de entrada (api_param_type <> "") | ['Qual o nome da criança?', 'Como se chama a criança'] |
 
-O motor do bot vai ler esta informação e vai conter toda a lógica necessária para responder de acordo com o esperado.
+### Entity
+
+<img width="637" alt="Entidade_config" src="https://user-images.githubusercontent.com/76813386/162626303-64f4d804-6865-4a7e-9724-ea60baf4fa57.PNG">
+
+A estrutura da **Entity** pode ter:
+| Nome | significado | Mandatório | Exemplos |
+| ---- | ----------- | ---------- | -------- |
+| name | Nome da entidade. Deverá corresponder ao valor dado ao parâmetro api_param_name da Intent que o vai usar | sim | periodo |
+| values | corresponde ao dicionário dos possíveis valores e os respectivos sinónimos. Recomenda-se que a key do dicionário esteja também na lista de valores, para que seja tido em conta na procura. | sim | "values": {"parcial" : ["parcial", "meio periodo"], "integral" : ["integral", "dia completo"]} |
+
+
+Este ficheiro é o coração do bot, onde toda a configuração vai implicar o comportamento do mesmo.
 
 
 ## Modelo de NLP
