@@ -143,17 +143,11 @@ O resultado deverá terminar com o link a copiar para o seu browser:
 
 Ao copiar o link para um browser, teremos um resultado deste tipo:
 
-<img width="600" alt="chatbot_browser" src="https://user-images.githubusercontent.com/76813386/156905744-5e23119d-8b15-473d-8ab2-3d7e3a23250a.PNG">
+<img width="386" alt="FE1" src="https://user-images.githubusercontent.com/76813386/162629514-8ed3f6b9-fa23-404f-946e-8f0f49264ad4.PNG">
 
-Adicionei no final da resposta que o bot nos dá alguns dados que podem ser interessante na fase de treino
+Em formato popup:
 
-<img width="329" alt="output" src="https://user-images.githubusercontent.com/76813386/156905980-780ac09d-b156-4e64-9005-1af42887bea0.PNG">
-
-Caso pretenda remover, basta alterar no file "processor.py".
-
-> python chatgui.py
-
-<img width="206" alt="chatbot_gui" src="https://user-images.githubusercontent.com/76813386/156906136-ff156fcf-74e8-4ef9-974c-63c98a625d15.PNG">
+<img width="199" alt="FE2" src="https://user-images.githubusercontent.com/76813386/162629606-544505bd-dd8c-455b-9106-371b00743ac1.PNG">
 
 Neste caso, é aberto uma janela de chat e o resultado mostrado é semelhante ao exemplo anterior, até porque ambos partilham das mesmas funções do file "processor.py".
 
