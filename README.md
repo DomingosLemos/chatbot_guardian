@@ -258,3 +258,8 @@ Bibliotecas usadas:
 https://www.nltk.org/
 https://realpython.com/natural-language-processing-spacy-python/
 
+livecicle
+variáveis entre sessões
+de onde vem e para onde vai (o a n)
+quebra na sequência caso o user sai da fluxo
+
